@@ -569,11 +569,10 @@ button {
 }
 
 .copy-prefix-card strong {
-  overflow: hidden;
   color: #4f3918;
   font-size: 13px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.45;
+  word-break: keep-all;
 }
 
 .copy-prefix-card button {

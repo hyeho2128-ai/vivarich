@@ -70,6 +70,11 @@ function getWeekNumber(dateKey: string) {
   return Math.ceil(date.getDate() / 7);
 }
 
+function formatMonthDay(dateKey: string) {
+  const date = new Date(`${dateKey}T00:00:00`);
+  return `${date.getMonth() + 1}/${date.getDate()}`;
+}
+
 function normalizedKind(post: CafePost): CertificationKind {
   return post.kind ?? "daily";
 }
@@ -104,6 +109,20 @@ export function CafeCheckPanel({
         : kind === "monthly"
           ? `${new Date(`${effectiveDate}T00:00:00`).getMonth() + 1}월 월말 정산`
           : specialTitle.trim() || "특별 인증";
+  const cafePostTitle =
+    kind === "daily"
+      ? `${CAFE_PREFIX} ${formatMonthDay(effectiveDate)} ${
+          slot === "morning" ? "아침인증" : "저녁인증"
+        }`
+      : kind === "weekly"
+        ? `${CAFE_PREFIX} ${formatMonthDay(effectiveDate)} ${getWeekNumber(effectiveDate)}주차 주간정산`
+        : kind === "monthly"
+          ? `${CAFE_PREFIX} ${
+              new Date(`${effectiveDate}T00:00:00`).getMonth() + 1
+            }월 월말정산`
+          : `${CAFE_PREFIX} ${formatMonthDay(effectiveDate)} ${
+              specialTitle.trim() || "특별인증"
+            }`;
 
   const activePosts = posts.filter(
     (post) =>
@@ -154,8 +173,8 @@ export function CafeCheckPanel({
     closeDialog();
   };
 
-  const copyCafePrefix = async () => {
-    await navigator.clipboard.writeText(CAFE_PREFIX);
+  const copyCafePostTitle = async () => {
+    await navigator.clipboard.writeText(cafePostTitle);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1600);
   };
@@ -245,10 +264,10 @@ export function CafeCheckPanel({
 
       <div className="copy-prefix-card">
         <div>
-          <span>카페 인증글 말머리</span>
-          <strong>{CAFE_PREFIX}</strong>
+          <span>카페 인증글 제목</span>
+          <strong>{cafePostTitle}</strong>
         </div>
-        <button onClick={copyCafePrefix}>
+        <button onClick={copyCafePostTitle}>
           {copied ? <Check size={16} /> : <Copy size={16} />}
           {copied ? "복사됨" : "복사"}
         </button>
