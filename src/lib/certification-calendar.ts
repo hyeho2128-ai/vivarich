@@ -62,13 +62,18 @@ export function getCertificationCalendarItems(
     }
   }
 
-  const monthEndKey = toDateKey(new Date(year, monthIndex, lastDay));
+  // 월말 정산 마감: 매달 첫째 주 일요일 (직전 달 정산)
+  const firstOfMonth = new Date(year, monthIndex, 1);
+  const firstSundayKey = toDateKey(
+    new Date(year, monthIndex, 1 + ((7 - firstOfMonth.getDay()) % 7)),
+  );
+  const settledMonthNumber = new Date(year, monthIndex, 0).getMonth() + 1;
   items.push({
-    id: `monthly-${monthEndKey}`,
-    date: monthEndKey,
-    title: "월말 정산",
+    id: `monthly-${firstSundayKey}`,
+    date: firstSundayKey,
+    title: `${settledMonthNumber}월 월말 정산`,
     kind: "monthly",
-    completedCount: memberCountFor(posts, "monthly", monthEndKey),
+    completedCount: memberCountFor(posts, "monthly", firstSundayKey),
     totalCount,
   });
 

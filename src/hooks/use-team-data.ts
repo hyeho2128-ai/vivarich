@@ -8,6 +8,15 @@ import type { TeamData } from "@/lib/types";
 const STORAGE_KEY = "viva-rich-team-data-v1";
 const CHANNEL_NAME = "viva-rich-team-sync";
 
+function normalizeTeamData(raw: Partial<TeamData>): TeamData {
+  return {
+    members: initialData.members,
+    events: raw.events ?? [],
+    posts: raw.posts ?? [],
+    boardPosts: raw.boardPosts ?? [],
+  };
+}
+
 export function useTeamData() {
   const [data, setData] = useState<TeamData>(initialData);
   const dataRef = useRef<TeamData>(initialData);
@@ -20,7 +29,7 @@ export function useTeamData() {
 
     if (stored) {
       try {
-        localSnapshot = JSON.parse(stored) as TeamData;
+        localSnapshot = normalizeTeamData(JSON.parse(stored) as Partial<TeamData>);
       } catch {
         window.localStorage.removeItem(STORAGE_KEY);
       }
@@ -57,7 +66,7 @@ export function useTeamData() {
       }
 
       if (row?.data) {
-        const sharedData = row.data as TeamData;
+        const sharedData = normalizeTeamData(row.data as Partial<TeamData>);
         dataRef.current = sharedData;
         setData(sharedData);
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(sharedData));
@@ -87,8 +96,9 @@ export function useTeamData() {
           filter: "id=eq.main",
         },
         (payload) => {
-          const sharedData = (payload.new as { data?: TeamData }).data;
-          if (!sharedData || !isActive) return;
+          const rawData = (payload.new as { data?: Partial<TeamData> }).data;
+          if (!rawData || !isActive) return;
+          const sharedData = normalizeTeamData(rawData);
           dataRef.current = sharedData;
           setData(sharedData);
           window.localStorage.setItem(STORAGE_KEY, JSON.stringify(sharedData));

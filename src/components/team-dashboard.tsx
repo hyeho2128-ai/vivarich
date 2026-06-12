@@ -2,31 +2,43 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { CalendarDays, Link2, Plus } from "lucide-react";
+import { ChevronDown, UserRound } from "lucide-react";
+import { BoardPanel } from "./board-panel";
 import { CafeCheckPanel } from "./cafe-check-panel";
+import { CertReminder } from "./cert-reminder";
 import { EventDialog } from "./event-dialog";
 import { MonthlyCalendar } from "./monthly-calendar";
+import { NamePickerDialog } from "./name-picker-dialog";
+import { useMyMember } from "@/hooks/use-my-member";
 import { useTeamData } from "@/hooks/use-team-data";
 import { getCertificationCalendarItems } from "@/lib/certification-calendar";
-import { toDateKey } from "@/lib/date";
 import type {
+  BoardPost,
   CalendarEvent,
   CafePost,
   CertificationKind,
+  CheckSlot,
 } from "@/lib/types";
+
+type Tab = "check" | "calendar" | "board";
 
 export function TeamDashboard() {
   const { data, updateData } = useTeamData();
-  const [activeTab, setActiveTab] = useState<"check" | "calendar">("check");
+  const { myMemberId, setMyMemberId, isLoaded } = useMyMember();
+  const [activeTab, setActiveTab] = useState<Tab>("check");
+  const [showNamePicker, setShowNamePicker] = useState(false);
   const [showCertifications, setShowCertifications] = useState(false);
   const [certificationSelection, setCertificationSelection] = useState<{
     date: string;
     kind: CertificationKind;
+    slot?: CheckSlot;
     title?: string;
   }>();
   const [month, setMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | undefined>();
+
+  const myMember = data.members.find((member) => member.id === myMemberId) ?? null;
 
   const openNewEvent = (date: string) => {
     setSelectedEvent(undefined);
@@ -77,147 +89,137 @@ export function TeamDashboard() {
     });
   };
 
-  const today = toDateKey(new Date());
-  const todayPosts = data.posts.filter(
-    (post) => (post.kind ?? "daily") === "daily" && post.date === today,
-  );
-  const registeredMembers = new Set(todayPosts.map((post) => post.memberId)).size;
-  const monthEventCount = data.events.filter((event) => {
-    const date = new Date(`${event.date}T00:00:00`);
-    return (
-      date.getFullYear() === month.getFullYear() &&
-      date.getMonth() === month.getMonth()
-    );
-  }).length;
+  const deletePost = (id: string) => {
+    updateData((current) => ({
+      ...current,
+      posts: current.posts.filter((post) => post.id !== id),
+    }));
+  };
+
+  const saveBoardPost = (post: BoardPost) => {
+    updateData((current) => ({
+      ...current,
+      boardPosts: current.boardPosts.some((item) => item.id === post.id)
+        ? current.boardPosts.map((item) => (item.id === post.id ? post : item))
+        : [...current.boardPosts, post],
+    }));
+  };
+
+  const deleteBoardPost = (id: string) => {
+    updateData((current) => ({
+      ...current,
+      boardPosts: current.boardPosts.filter((post) => post.id !== id),
+    }));
+  };
+
   const certificationItems = getCertificationCalendarItems(
     month,
     data.posts,
     data.members.length,
   );
 
-  const selectTab = (tab: "check" | "calendar") => {
-    setActiveTab(tab);
-    window.setTimeout(() => {
-      document.getElementById("workspace")?.scrollIntoView({ behavior: "smooth" });
-    }, 0);
+  const goCertify = (slot: CheckSlot, date: string) => {
+    setCertificationSelection({ date, kind: "daily", slot });
+    setActiveTab("check");
   };
 
   return (
-    <main className="app-shell" id="dashboard">
+    <main className="app-shell">
       <header className="topbar">
-        <a className="brand" href="#dashboard" aria-label="VIVA RICH 홈">
-          <span className="brand-mark">V</span>
+        <a className="brand" href="#" aria-label="VIVA RICH 홈">
+          <span className="brand-logo">
+            <Image src="/viva-rich-logo.png" alt="" width={38} height={38} priority />
+          </span>
           <span className="brand-copy">
             <strong>VIVA RICH</strong>
-            <small>Live rich, grow together</small>
+            <small>LIVE RICH, GROW TOGETHER</small>
           </span>
         </a>
-        <nav className="desktop-nav" aria-label="주요 메뉴">
+        <button
+          className={`my-name-chip ${myMember ? "" : "empty"}`}
+          onClick={() => setShowNamePicker(true)}
+        >
+          {myMember ? (
+            <>
+              <span
+                className="member-avatar avatar-sm"
+                style={{ background: myMember.color }}
+              >
+                {myMember.initials}
+              </span>
+              {myMember.name}
+            </>
+          ) : (
+            <>
+              <UserRound size={15} />
+              내 이름 선택
+            </>
+          )}
+          <ChevronDown size={14} />
+        </button>
+      </header>
+
+      <div className="page-content">
+        {isLoaded && !myMember && (
+          <button className="welcome-card" onClick={() => setShowNamePicker(true)}>
+            <div>
+              <strong>먼저 내 이름을 선택해 주세요</strong>
+              <span>인증 등록, 글쓰기, 마감 알림에 사용돼요. 로그인은 필요 없어요.</span>
+            </div>
+            <span className="welcome-cta">선택하기</span>
+          </button>
+        )}
+
+        <CertReminder myMember={myMember} posts={data.posts} onGoCertify={goCertify} />
+
+        <nav className="workspace-tabs" role="tablist" aria-label="보기 선택">
           <button
             className={activeTab === "check" ? "active" : ""}
-            onClick={() => selectTab("check")}
+            role="tab"
+            aria-selected={activeTab === "check"}
+            onClick={() => setActiveTab("check")}
           >
             인증
           </button>
           <button
             className={activeTab === "calendar" ? "active" : ""}
-            onClick={() => selectTab("calendar")}
+            role="tab"
+            aria-selected={activeTab === "calendar"}
+            onClick={() => setActiveTab("calendar")}
           >
             일정
           </button>
+          <button
+            className={activeTab === "board" ? "active" : ""}
+            role="tab"
+            aria-selected={activeTab === "board"}
+            onClick={() => setActiveTab("board")}
+          >
+            게시판
+          </button>
         </nav>
-      </header>
 
-      <section className="brand-hero">
-        <div className="brand-hero-inner">
-          <div className="hero-copy">
-            <span className="hero-label">VIVA RICH · 8명의 성장 기록</span>
-            <h1>
-              함께 기록하면,
-              <br />
-              꾸준함이 자산이 돼요.
-            </h1>
-            <p>
-              아침·저녁 인증 링크와 월별 일정을 한곳에서 간편하게 관리하세요.
-            </p>
-            <div className="hero-actions">
-              <button className="hero-primary" onClick={() => selectTab("check")}>
-                인증 링크 등록하기
-                <Link2 size={17} />
-              </button>
-              <button
-                className="hero-secondary"
-                onClick={() => {
-                  setActiveTab("calendar");
-                  openNewEvent(today);
-                }}
-              >
-                <Plus size={17} />
-                오늘 일정 추가
-              </button>
-            </div>
-          </div>
-          <div className="hero-logo-card" aria-hidden="true">
-            <Image
-              src="/viva-rich-logo.png"
-              alt=""
-              fill
-              priority
-              sizes="(max-width: 760px) 180px, 280px"
-            />
-          </div>
-        </div>
-      </section>
-
-      <div className="page-content">
-        <section className="workspace" id="workspace">
-          <div className="workspace-tabs" role="tablist" aria-label="보기 선택">
-            <button
-              className={activeTab === "check" ? "active" : ""}
-              role="tab"
-              aria-selected={activeTab === "check"}
-              onClick={() => setActiveTab("check")}
-            >
-              <span className="tab-icon">
-                <Link2 size={19} />
-              </span>
-              <span className="tab-copy">
-                <strong>인증</strong>
-                <small>{registeredMembers} / {data.members.length}</small>
-              </span>
-            </button>
-            <button
-              className={activeTab === "calendar" ? "active" : ""}
-              role="tab"
-              aria-selected={activeTab === "calendar"}
-              onClick={() => setActiveTab("calendar")}
-            >
-              <span className="tab-icon">
-                <CalendarDays size={19} />
-              </span>
-              <span className="tab-copy">
-                <strong>일정</strong>
-                <small>이번 달 {monthEventCount}건</small>
-              </span>
-            </button>
-          </div>
-
-          <div className="tab-content" role="tabpanel">
-            {activeTab === "check" ? (
+        <div className="tab-content" role="tabpanel">
+          {activeTab === "check" && (
             <CafeCheckPanel
               key={
                 certificationSelection
-                  ? `${certificationSelection.kind}:${certificationSelection.date}:${certificationSelection.title ?? ""}`
+                  ? `${certificationSelection.kind}:${certificationSelection.date}:${certificationSelection.slot ?? ""}:${certificationSelection.title ?? ""}`
                   : "today"
               }
               members={data.members}
               posts={data.posts}
+              myMemberId={myMemberId}
               initialDate={certificationSelection?.date}
               initialKind={certificationSelection?.kind}
+              initialSlot={certificationSelection?.slot}
               initialSpecialTitle={certificationSelection?.title}
               onSavePost={savePost}
+              onDeletePost={deletePost}
+              onRequireName={() => setShowNamePicker(true)}
             />
-            ) : (
+          )}
+          {activeTab === "calendar" && (
             <MonthlyCalendar
               month={month}
               events={data.events}
@@ -239,16 +241,20 @@ export function TeamDashboard() {
                   title: item.kind === "special" ? item.title : undefined,
                 });
                 setActiveTab("check");
-                window.setTimeout(() => {
-                  document
-                    .getElementById("workspace")
-                    ?.scrollIntoView({ behavior: "smooth" });
-                }, 0);
               }}
             />
-            )}
-          </div>
-        </section>
+          )}
+          {activeTab === "board" && (
+            <BoardPanel
+              members={data.members}
+              boardPosts={data.boardPosts}
+              myMemberId={myMemberId}
+              onSave={saveBoardPost}
+              onDelete={deleteBoardPost}
+              onRequireName={() => setShowNamePicker(true)}
+            />
+          )}
+        </div>
       </div>
 
       {selectedDate && (
@@ -261,6 +267,15 @@ export function TeamDashboard() {
           }}
           onSave={saveEvent}
           onDelete={deleteEvent}
+        />
+      )}
+
+      {showNamePicker && (
+        <NamePickerDialog
+          members={data.members}
+          currentId={myMemberId}
+          onSelect={setMyMemberId}
+          onClose={() => setShowNamePicker(false)}
         />
       )}
     </main>

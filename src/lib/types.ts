@@ -40,8 +40,21 @@ export type CertificationCalendarItem = {
   totalCount?: number;
 };
 
+export type BoardCategory = "notice" | "free";
+
+export type BoardPost = {
+  id: string;
+  category: BoardCategory;
+  title: string;
+  content: string;
+  authorId: string;
+  createdAt: string;
+  updatedAt?: string;
+};
+
 export type TeamData = {
   members: Member[];
   events: CalendarEvent[];
   posts: CafePost[];
+  boardPosts: BoardPost[];
 };
