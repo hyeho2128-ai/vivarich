@@ -222,10 +222,7 @@ export function CafeCheckPanel({
           aria-selected={kind === "daily"}
           onClick={() => setKind("daily")}
         >
-          <span className="cert-tab-daily-label">
-            매일 인증
-            <span className="cert-tab-freq">매일</span>
-          </span>
+          <span className="cert-tab-daily-label">매일 인증</span>
           <span className="cert-tab-count">
             {dailyCount}
             <em>/{members.length}</em>

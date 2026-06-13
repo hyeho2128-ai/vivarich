@@ -87,12 +87,16 @@ export function GoalsPanel({
                     {total ? `${done}/${total} 달성` : "아직 목표가 없어요"}
                   </span>
                 </div>
-                <div className="goal-rate">{rate}%</div>
+                <div className={`goal-rate ${total ? "" : "empty"}`}>
+                  {total ? `${rate}%` : "—"}
+                </div>
               </div>
 
-              <div className="goal-progress">
-                <i style={{ width: `${rate}%` }} />
-              </div>
+              {total > 0 && (
+                <div className="goal-progress">
+                  <i style={{ width: `${rate}%` }} />
+                </div>
+              )}
 
               {total > 0 && (
                 <ul className="goal-list">

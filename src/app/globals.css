@@ -458,10 +458,15 @@ button {
 /* ───── 목표 패널 ───── */
 
 .goal-member-list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
   gap: 12px;
   padding: 4px 22px 20px;
+}
+
+.goal-member-card.is-mine {
+  grid-column: 1 / -1;
 }
 
 .goal-member-card {
@@ -509,6 +514,10 @@ button {
   font-size: 20px;
   font-weight: 800;
   letter-spacing: -0.02em;
+}
+
+.goal-rate.empty {
+  color: var(--gray-300);
 }
 
 .goal-progress {
@@ -688,21 +697,6 @@ button {
   color: white;
   background: linear-gradient(135deg, var(--blue), #1b64da);
   box-shadow: 0 6px 16px rgba(49, 130, 246, 0.28);
-}
-
-.cert-tab-freq {
-  flex: 0 0 auto;
-  padding: 2px 8px;
-  border-radius: 999px;
-  color: var(--blue);
-  background: var(--blue-soft);
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cert-tab-daily.active .cert-tab-freq {
-  color: white;
-  background: rgba(255, 255, 255, 0.22);
 }
 
 .cert-tab-count {
@@ -1893,6 +1887,7 @@ button {
   }
 
   .goal-member-list {
+    grid-template-columns: 1fr;
     padding: 4px 16px 18px;
   }
 
