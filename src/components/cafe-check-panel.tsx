@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
   CalendarRange,
   Check,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   ExternalLink,
@@ -230,18 +231,25 @@ export function CafeCheckPanel({
             <em>/{members.length}</em>
           </span>
         </button>
-        <div className="cert-tab-others">
-          {certificationTypes.slice(1).map((type) => (
-            <button
-              className={kind === type.value ? "active" : ""}
-              key={type.value}
-              role="tab"
-              aria-selected={kind === type.value}
-              onClick={() => setKind(type.value)}
-            >
-              {type.label}
-            </button>
-          ))}
+        <div className={`cert-select-wrap ${kind !== "daily" ? "active" : ""}`}>
+          <select
+            className="cert-select"
+            value={kind === "daily" ? "" : kind}
+            onChange={(selectEvent) =>
+              setKind(selectEvent.target.value as CertificationKind)
+            }
+            aria-label="정산·특별 인증 선택"
+          >
+            <option value="" disabled>
+              정산·특별 인증
+            </option>
+            {certificationTypes.slice(1).map((type) => (
+              <option key={type.value} value={type.value}>
+                {type.label}
+              </option>
+            ))}
+          </select>
+          <ChevronDown size={16} />
         </div>
       </div>
 

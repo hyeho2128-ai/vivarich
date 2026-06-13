@@ -656,30 +656,32 @@ button {
 
 .certification-type-tabs {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin: 22px 22px 14px;
+  gap: 8px;
+  margin: 18px 22px 12px;
 }
 
 .cert-tab-daily {
-  height: 54px;
+  flex: 1;
+  min-width: 0;
+  height: 46px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 0 16px;
+  padding: 0 14px;
   border: 0;
   border-radius: var(--radius-md);
   color: var(--gray-500);
   background: var(--gray-100);
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 800;
 }
 
 .cert-tab-daily-label {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
+  min-width: 0;
 }
 
 .cert-tab-daily.active {
@@ -689,6 +691,7 @@ button {
 }
 
 .cert-tab-freq {
+  flex: 0 0 auto;
   padding: 2px 8px;
   border-radius: 999px;
   color: var(--blue);
@@ -707,11 +710,11 @@ button {
   display: inline-flex;
   align-items: baseline;
   gap: 1px;
-  padding: 4px 11px;
+  padding: 3px 10px;
   border-radius: 999px;
   background: white;
   color: var(--blue);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 800;
 }
 
@@ -727,29 +730,48 @@ button {
   color: white;
 }
 
-.cert-tab-others {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
-  padding: 4px;
-  border-radius: var(--radius-md);
-  background: var(--gray-100);
+.cert-select-wrap {
+  position: relative;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
 }
 
-.cert-tab-others button {
-  height: 38px;
-  border: 0;
-  border-radius: var(--radius-sm);
+.cert-select-wrap > svg {
+  position: absolute;
+  right: 10px;
+  pointer-events: none;
   color: var(--gray-500);
-  background: transparent;
+}
+
+.cert-select-wrap.active > svg {
+  color: var(--blue);
+}
+
+.cert-select {
+  height: 46px;
+  max-width: 156px;
+  padding: 0 32px 0 14px;
+  border: 0;
+  border-radius: var(--radius-md);
+  color: var(--gray-600);
+  background: var(--gray-100);
   font-size: 13px;
   font-weight: 700;
+  font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
 }
 
-.cert-tab-others button.active {
-  color: var(--ink);
-  background: white;
-  box-shadow: 0 2px 8px rgba(25, 31, 40, 0.08);
+.cert-select-wrap.active .cert-select {
+  color: var(--blue);
+  background: var(--blue-soft);
+}
+
+.cert-select:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 1px;
 }
 
 .check-controls {
@@ -1921,12 +1943,14 @@ button {
   }
 
   .cert-tab-daily {
-    height: 48px;
-    font-size: 15px;
+    height: 44px;
+    font-size: 14px;
   }
 
-  .cert-tab-others button {
-    height: 36px;
+  .cert-select {
+    height: 44px;
+    max-width: 132px;
+    font-size: 13px;
   }
 
   .member-check-row {
