@@ -6,7 +6,6 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
-  Copy,
   ExternalLink,
   Link2,
   Moon,
@@ -42,7 +41,6 @@ type LinkDialogState = {
   post?: CafePost;
 };
 
-const CAFE_PREFIX = "[재학사2기_VIVA RICH]";
 const certificationTypes: {
   value: CertificationKind;
   label: string;
@@ -92,11 +90,6 @@ function getWeekNumber(dateKey: string) {
   return Math.ceil(date.getDate() / 7);
 }
 
-function formatMonthDay(dateKey: string) {
-  const date = new Date(`${dateKey}T00:00:00`);
-  return `${date.getMonth() + 1}/${date.getDate()}`;
-}
-
 function normalizedKind(post: CafePost): CertificationKind {
   return post.kind ?? "daily";
 }
@@ -123,7 +116,6 @@ export function CafeCheckPanel({
   const [dialog, setDialog] = useState<LinkDialogState | null>(null);
   const [url, setUrl] = useState("");
   const [error, setError] = useState("");
-  const [copied, setCopied] = useState(false);
 
   const effectiveDate =
     kind === "weekly"
@@ -139,18 +131,6 @@ export function CafeCheckPanel({
         : kind === "monthly"
           ? `${settledMonth(effectiveDate)}월 월말 정산`
           : specialTitle.trim() || "특별 인증";
-  const cafePostTitle =
-    kind === "daily"
-      ? `${CAFE_PREFIX} ${formatMonthDay(effectiveDate)} ${
-          slot === "morning" ? "오전인증" : "저녁인증"
-        }`
-      : kind === "weekly"
-        ? `${CAFE_PREFIX} ${formatMonthDay(effectiveDate)} ${getWeekNumber(effectiveDate)}주차 주간정산`
-        : kind === "monthly"
-          ? `${CAFE_PREFIX} ${settledMonth(effectiveDate)}월 월말정산`
-          : `${CAFE_PREFIX} ${formatMonthDay(effectiveDate)} ${
-              specialTitle.trim() || "특별인증"
-            }`;
 
   const activePosts = posts.filter(
     (post) =>
@@ -230,12 +210,6 @@ export function CafeCheckPanel({
       createdAt: dialog.post?.createdAt ?? new Date().toISOString(),
     });
     closeDialog();
-  };
-
-  const copyCafePostTitle = async () => {
-    await navigator.clipboard.writeText(cafePostTitle);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1600);
   };
 
   return (
@@ -344,17 +318,6 @@ export function CafeCheckPanel({
           </strong>
         </div>
       )}
-
-      <div className="copy-prefix-card">
-        <div>
-          <span>카페 인증글 제목</span>
-          <strong>{cafePostTitle}</strong>
-        </div>
-        <button onClick={copyCafePostTitle}>
-          {copied ? <Check size={16} /> : <Copy size={16} />}
-          {copied ? "복사됨" : "복사"}
-        </button>
-      </div>
 
       <div className="member-check-list">
         {[...members]
