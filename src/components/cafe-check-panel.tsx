@@ -4,6 +4,8 @@ import { useState } from "react";
 import {
   CalendarRange,
   Check,
+  ChevronLeft,
+  ChevronRight,
   Copy,
   ExternalLink,
   Link2,
@@ -171,6 +173,19 @@ export function CafeCheckPanel({
       .map((post) => post.memberId),
   ).size;
 
+  // 인증 종류에 맞춰 날짜를 좌우로 이동 (매일/특별=하루, 주간=일주일, 월말=한 달)
+  const shiftDate = (direction: 1 | -1) => {
+    const next = new Date(`${date}T00:00:00`);
+    if (kind === "weekly") {
+      next.setDate(next.getDate() + direction * 7);
+    } else if (kind === "monthly") {
+      next.setMonth(next.getMonth() + direction);
+    } else {
+      next.setDate(next.getDate() + direction);
+    }
+    setDate(toDateKey(next));
+  };
+
   const openDialog = (member: Member, post?: CafePost) => {
     setDialog({ member, post });
     setUrl(post?.url ?? "");
@@ -257,16 +272,34 @@ export function CafeCheckPanel({
       </div>
 
       <div className={`check-controls ${kind === "daily" ? "" : "single-control"}`}>
-        <label className="cert-date-control">
-          <CalendarRange size={16} />
-          <input
-            className="date-input"
-            type="date"
-            value={date}
-            onChange={(inputEvent) => setDate(inputEvent.target.value)}
-            aria-label="확인 날짜"
-          />
-        </label>
+        <div className="cert-date-nav">
+          <button
+            type="button"
+            className="date-nav-button"
+            onClick={() => shiftDate(-1)}
+            aria-label="이전 날짜"
+          >
+            <ChevronLeft size={18} />
+          </button>
+          <label className="cert-date-control">
+            <CalendarRange size={16} />
+            <input
+              className="date-input"
+              type="date"
+              value={date}
+              onChange={(inputEvent) => setDate(inputEvent.target.value)}
+              aria-label="확인 날짜"
+            />
+          </label>
+          <button
+            type="button"
+            className="date-nav-button"
+            onClick={() => shiftDate(1)}
+            aria-label="다음 날짜"
+          >
+            <ChevronRight size={18} />
+          </button>
+        </div>
         {kind === "daily" && (
           <div className="slot-toggle" aria-label="확인 시간대">
             <button

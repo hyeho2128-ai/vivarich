@@ -763,13 +763,39 @@ button {
   grid-template-columns: 1fr;
 }
 
+.cert-date-nav {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.date-nav-button {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: var(--radius-md);
+  color: var(--gray-600);
+  background: var(--gray-100);
+  transition: background 120ms ease;
+}
+
+.date-nav-button:hover {
+  color: var(--blue);
+  background: var(--blue-soft);
+}
+
 .cert-date-control {
+  flex: 1;
   min-width: 0;
   height: 46px;
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding-left: 13px;
+  gap: 6px;
+  padding-left: 10px;
   border-radius: var(--radius-md);
   color: var(--gray-500);
   background: var(--gray-100);
