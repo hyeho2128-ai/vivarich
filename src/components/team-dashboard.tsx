@@ -7,6 +7,7 @@ import { BoardPanel } from "./board-panel";
 import { CafeCheckPanel } from "./cafe-check-panel";
 import { CertReminder } from "./cert-reminder";
 import { EventDialog } from "./event-dialog";
+import { GoalsPanel } from "./goals-panel";
 import { MonthlyCalendar } from "./monthly-calendar";
 import { NamePickerDialog } from "./name-picker-dialog";
 import { useMyMember } from "@/hooks/use-my-member";
@@ -18,9 +19,10 @@ import type {
   CafePost,
   CertificationKind,
   CheckSlot,
+  Goal,
 } from "@/lib/types";
 
-type Tab = "check" | "calendar" | "board";
+type Tab = "check" | "calendar" | "board" | "goals";
 
 export function TeamDashboard() {
   const { data, updateData } = useTeamData();
@@ -112,6 +114,22 @@ export function TeamDashboard() {
     }));
   };
 
+  const saveGoal = (goal: Goal) => {
+    updateData((current) => ({
+      ...current,
+      goals: current.goals.some((item) => item.id === goal.id)
+        ? current.goals.map((item) => (item.id === goal.id ? goal : item))
+        : [...current.goals, goal],
+    }));
+  };
+
+  const deleteGoal = (id: string) => {
+    updateData((current) => ({
+      ...current,
+      goals: current.goals.filter((goal) => goal.id !== id),
+    }));
+  };
+
   const certificationItems = getCertificationCalendarItems(
     month,
     data.posts,
@@ -197,6 +215,14 @@ export function TeamDashboard() {
           >
             게시판
           </button>
+          <button
+            className={activeTab === "goals" ? "active" : ""}
+            role="tab"
+            aria-selected={activeTab === "goals"}
+            onClick={() => setActiveTab("goals")}
+          >
+            목표
+          </button>
         </nav>
 
         <div className="tab-content" role="tabpanel">
@@ -251,6 +277,16 @@ export function TeamDashboard() {
               myMemberId={myMemberId}
               onSave={saveBoardPost}
               onDelete={deleteBoardPost}
+              onRequireName={() => setShowNamePicker(true)}
+            />
+          )}
+          {activeTab === "goals" && (
+            <GoalsPanel
+              members={data.members}
+              goals={data.goals}
+              myMemberId={myMemberId}
+              onSave={saveGoal}
+              onDelete={deleteGoal}
               onRequireName={() => setShowNamePicker(true)}
             />
           )}

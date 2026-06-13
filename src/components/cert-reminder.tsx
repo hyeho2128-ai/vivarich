@@ -89,8 +89,8 @@ export function CertReminder({ myMember, posts, onGoCertify }: CertReminderProps
         if (!alreadyNotified(key)) {
           markNotified(key);
           sendNotification(
-            "아침 인증 시간이 지났어요",
-            `${myMember.name}님, 오늘 아침 인증이 아직 등록되지 않았어요.`,
+            "오전 인증 시간이 지났어요",
+            `${myMember.name}님, 오늘 오전 인증이 아직 등록되지 않았어요.`,
           );
         }
       }
@@ -147,7 +147,7 @@ export function CertReminder({ myMember, posts, onGoCertify }: CertReminderProps
       key: `info:morning:${morning.certDate}`,
       tone: "info",
       icon: <AlarmClock size={18} />,
-      text: `아침 인증 마감까지 ${formatRemaining(morning.deadline.getTime() - now.getTime())} 남았어요 (오전 9시까지)`,
+      text: `오전 인증 마감까지 ${formatRemaining(morning.deadline.getTime() - now.getTime())} 남았어요 (오전 9시까지)`,
       slot: "morning",
       date: morning.certDate,
     };
@@ -157,8 +157,8 @@ export function CertReminder({ myMember, posts, onGoCertify }: CertReminderProps
       tone: "warn",
       icon: <CircleAlert size={18} />,
       text: eveningDone
-        ? "오늘 아침 인증 시간이 지났어요."
-        : "아침 인증 시간이 지났어요. 저녁 인증은 내일 새벽 5시까지예요.",
+        ? "오늘 오전 인증 시간이 지났어요."
+        : "오전 인증 시간이 지났어요. 저녁 인증은 내일 새벽 5시까지예요.",
       slot: eveningDone ? undefined : "evening",
       date: evening.certDate,
     };
@@ -177,7 +177,7 @@ export function CertReminder({ myMember, posts, onGoCertify }: CertReminderProps
       tone: "done",
       icon: <CheckCircle2 size={18} />,
       text: morningDone
-        ? "오늘 아침·저녁 인증을 모두 마쳤어요. 멋져요!"
+        ? "오늘 오전·저녁 인증을 모두 마쳤어요. 멋져요!"
         : "저녁 인증을 마쳤어요!",
     };
   }

@@ -52,9 +52,18 @@ export type BoardPost = {
   updatedAt?: string;
 };
 
+export type Goal = {
+  id: string;
+  memberId: string;
+  title: string;
+  done: boolean;
+  createdAt: string;
+};
+
 export type TeamData = {
   members: Member[];
   events: CalendarEvent[];
   posts: CafePost[];
   boardPosts: BoardPost[];
+  goals: Goal[];
 };

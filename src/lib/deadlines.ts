@@ -1,7 +1,7 @@
 import { toDateKey } from "./date";
 import type { CafePost, CheckSlot } from "./types";
 
-// 인증 마감: 아침 = 당일 오전 9시, 저녁 = 다음날 새벽 5시
+// 인증 마감: 오전 = 당일 오전 9시, 저녁 = 다음날 새벽 5시
 export const MORNING_DEADLINE_HOUR = 9;
 export const EVENING_DEADLINE_HOUR = 5; // 다음날 새벽
 
@@ -9,7 +9,7 @@ export const EVENING_DEADLINE_HOUR = 5; // 다음날 새벽
 export const REMINDER_BEFORE_MINUTES = 30;
 
 export const SLOT_LABELS: Record<CheckSlot, string> = {
-  morning: "아침",
+  morning: "오전",
   evening: "저녁",
 };
 

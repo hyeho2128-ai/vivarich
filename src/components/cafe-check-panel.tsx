@@ -131,7 +131,7 @@ export function CafeCheckPanel({
         : date;
   const activeTitle =
     kind === "daily"
-      ? `${slot === "morning" ? "아침" : "저녁"} 매일 인증`
+      ? `${slot === "morning" ? "오전" : "저녁"} 매일 인증`
       : kind === "weekly"
         ? `${getWeekNumber(effectiveDate)}주차 주간 정산`
         : kind === "monthly"
@@ -140,7 +140,7 @@ export function CafeCheckPanel({
   const cafePostTitle =
     kind === "daily"
       ? `${CAFE_PREFIX} ${formatMonthDay(effectiveDate)} ${
-          slot === "morning" ? "아침인증" : "저녁인증"
+          slot === "morning" ? "오전인증" : "저녁인증"
         }`
       : kind === "weekly"
         ? `${CAFE_PREFIX} ${formatMonthDay(effectiveDate)} ${getWeekNumber(effectiveDate)}주차 주간정산`
@@ -274,7 +274,7 @@ export function CafeCheckPanel({
               onClick={() => setSlot("morning")}
             >
               <Sun size={16} />
-              아침
+              오전
             </button>
             <button
               className={slot === "evening" ? "active" : ""}

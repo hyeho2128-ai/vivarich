@@ -77,4 +77,20 @@ export const initialData: TeamData = {
       createdAt: now.toISOString(),
     },
   ],
+  goals: [
+    {
+      id: "goal-1",
+      memberId: "m1",
+      title: "매일 오전·저녁 인증 빠짐없이 하기",
+      done: false,
+      createdAt: now.toISOString(),
+    },
+    {
+      id: "goal-2",
+      memberId: "m1",
+      title: "경제 뉴스 하루 1개 읽기",
+      done: true,
+      createdAt: now.toISOString(),
+    },
+  ],
 };

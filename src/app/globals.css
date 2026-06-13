@@ -455,6 +455,203 @@ button {
   font-size: 13px;
 }
 
+/* ───── 목표 패널 ───── */
+
+.goal-member-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 4px 22px 20px;
+}
+
+.goal-member-card {
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--gray-100);
+  background: white;
+}
+
+.goal-member-card.is-mine {
+  border-color: transparent;
+  background: var(--blue-soft);
+}
+
+.goal-member-head {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.goal-member-name {
+  flex: 1;
+  min-width: 0;
+}
+
+.goal-member-name strong {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.goal-member-name span {
+  display: block;
+  margin-top: 1px;
+  color: var(--gray-500);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.goal-rate {
+  flex: 0 0 auto;
+  color: var(--blue);
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.goal-progress {
+  height: 8px;
+  margin: 12px 0 4px;
+  border-radius: 999px;
+  background: rgba(25, 31, 40, 0.07);
+  overflow: hidden;
+}
+
+.goal-progress i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--blue), #1b64da);
+  transition: width 220ms ease;
+}
+
+.goal-list {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.goal-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 4px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.goal-item > span {
+  flex: 1;
+  min-width: 0;
+  color: var(--ink);
+}
+
+.goal-item.done > span {
+  color: var(--gray-400);
+  text-decoration: line-through;
+}
+
+.goal-check {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--gray-300);
+  border-radius: 8px;
+  color: white;
+  background: white;
+  transition: 120ms ease;
+}
+
+.goal-check:disabled {
+  cursor: default;
+}
+
+.goal-item.done .goal-check {
+  border-color: var(--blue);
+  background: var(--blue);
+}
+
+.goal-delete {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--gray-400);
+  background: transparent;
+}
+
+.goal-delete:hover {
+  color: var(--red);
+  background: var(--red-soft);
+}
+
+.goal-add {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.goal-add input {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  background: white;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.goal-add input:focus {
+  outline: none;
+  border-color: var(--blue);
+}
+
+.goal-add button {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 44px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: white;
+  background: var(--blue);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.goal-add button:disabled {
+  color: var(--gray-500);
+  background: var(--gray-200);
+}
+
+.goal-require-name {
+  display: block;
+  width: calc(100% - 44px);
+  margin: 0 22px 20px;
+  padding: 16px;
+  border: 1px dashed var(--gray-300);
+  border-radius: var(--radius-md);
+  color: var(--gray-600);
+  background: var(--gray-50);
+  font-size: 13px;
+  font-weight: 700;
+}
+
 /* ───── 인증 패널 ───── */
 
 .certification-type-tabs {
@@ -1695,6 +1892,15 @@ button {
 
   .schedule-list {
     padding: 4px 16px 16px;
+  }
+
+  .goal-member-list {
+    padding: 4px 16px 18px;
+  }
+
+  .goal-require-name {
+    width: calc(100% - 32px);
+    margin: 0 16px 18px;
   }
 
   .check-controls {

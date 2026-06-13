@@ -14,6 +14,7 @@ function normalizeTeamData(raw: Partial<TeamData>): TeamData {
     events: raw.events ?? [],
     posts: raw.posts ?? [],
     boardPosts: raw.boardPosts ?? [],
+    goals: raw.goals ?? [],
   };
 }
 
